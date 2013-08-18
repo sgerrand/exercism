@@ -2,27 +2,27 @@ require './test/test_helper'
 require 'exercism/submission'
 
 class SubmissionTest < Minitest::Test
-  def test_knows_ruby_code
-    refute Exercism::Submission.test?('queens.rb')
-  end
+  LANGUAGES = [
+    {:lang => :ruby,        :ext => '.rb'},
+    {:lang => :elixir,      :ext => '.exs'},
+    {:lang => :javascript,  :ext => '.js'},
+    {:lang => :clojure,     :ext => '.clj'},
+    {:lang => :python,      :ext => '.py'},
+    {:lang => :go,          :ext => '.go'},
+  ]
 
-  def test_identifies_ruby_tests
-    assert Exercism::Submission.test?('queens_test.rb')
-  end
+  LANGUAGES.each do |pair|
+    define_method "test_knows_#{pair[:lang]}_code" do
+      refute Exercism::Submission.test?("queens#{pair[:ext]}")
+    end
 
-  def test_knows_elixir_code
-    refute Exercism::Submission.test?('queens.exs')
-  end
-
-  def test_identifies_elixir_tests
-    assert Exercism::Submission.test?('queens_test.exs')
-  end
-
-  def test_knows_javascript_code
-    refute Exercism::Submission.test?('queens.js')
-  end
-
-  def test_identifies_javascript_tests
-    assert Exercism::Submission.test?('queens.spec.js')
+    define_method "test_identifies_#{pair[:lang]}_tests" do
+      case pair[:lang]
+      when :javascript then
+        assert Exercism::Submission.test?("queens.spec#{pair[:ext]}")
+      else
+        assert Exercism::Submission.test?("queens_test#{pair[:ext]}")
+      end
+    end
   end
 end
